@@ -1,0 +1,159 @@
+
+(() => {
+  const micButton = document.getElementById("micButton");
+  const voiceStatus = document.getElementById("voiceStatus");
+  const messageInput = document.getElementById("messageInput");
+
+  const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+  let recognition = null;
+  let listening = false;
+  let speaking = false;
+
+  function status(message) {
+    if (voiceStatus) {
+      voiceStatus.textContent = message;
+    }
+  }
+
+  function setCharacterSpeaking(active) {
+    if (window.SIZUCharacter) {
+      window.SIZUCharacter.setSpeaking(active);
+    }
+  }
+
+  function stopSpeaking() {
+    window.speechSynthesis?.cancel();
+    speaking = false;
+    setCharacterSpeaking(false);
+  }
+
+  function speak(text, language = "en-IN") {
+    if (!("speechSynthesis" in window) || !text) {
+      status("VOICE OUTPUT UNAVAILABLE");
+      return;
+    }
+
+    stopSpeaking();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = language;
+    utterance.rate = 1;
+    utterance.pitch = 0.95;
+    utterance.volume = 1;
+
+    const voices = window.speechSynthesis.getVoices();
+
+    const preferredVoice = voices.find(
+      voice => voice.lang.toLowerCase() === language.toLowerCase()
+    );
+
+    if (preferredVoice) {
+      utterance.voice = preferredVoice;
+    }
+
+    utterance.onstart = () => {
+      speaking = true;
+      status("SIZU IS SPEAKING");
+      setCharacterSpeaking(true);
+    };
+
+    utterance.onend = () => {
+      speaking = false;
+      status("VOICE READY");
+      setCharacterSpeaking(false);
+    };
+
+    utterance.onerror = () => {
+      speaking = false;
+      status("VOICE ERROR");
+      setCharacterSpeaking(false);
+    };
+
+    window.speechSynthesis.speak(utterance);
+  }
+
+  function startListening() {
+    if (!SpeechRecognition) {
+      status("VOICE INPUT NOT SUPPORTED");
+      return;
+    }
+
+    if (listening) {
+      recognition?.stop();
+      return;
+    }
+
+    stopSpeaking();
+
+    recognition = new SpeechRecognition();
+    recognition.lang = "en-IN";
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 1;
+
+    recognition.onstart = () => {
+      listening = true;
+      status("LISTENING...");
+      micButton?.classList.add("active");
+
+      window.SIZUCharacter?.setEmotion("listening");
+    };
+
+    recognition.onresult = (event) => {
+      let transcript = "";
+
+      for (
+        let i = event.resultIndex;
+        i < event.results.length;
+        i++
+      ) {
+        transcript += event.results[i][0].transcript;
+      }
+
+      if (messageInput) {
+        messageInput.value = transcript;
+      }
+    };
+
+    recognition.onerror = (event) => {
+      status(
+        event.error === "not-allowed"
+          ? "MICROPHONE PERMISSION DENIED"
+          : "VOICE INPUT ERROR"
+      );
+    };
+
+    recognition.onend = () => {
+      listening = false;
+      micButton?.classList.remove("active");
+      window.SIZUCharacter?.setEmotion("normal");
+
+      if (voiceStatus?.textContent === "LISTENING...") {
+        status("VOICE READY");
+      }
+    };
+
+    try {
+      recognition.start();
+    } catch (error) {
+      status("COULD NOT START MICROPHONE");
+    }
+  }
+
+  micButton?.addEventListener("click", startListening);
+
+  window.SIZUVoice = {
+    speak,
+    stopSpeaking,
+    startListening,
+    isListening: () => listening,
+    isSpeaking: () => speaking
+  };
+
+  if (!SpeechRecognition) {
+    status("TEXT READY · VOICE UNSUPPORTED");
+  }
+})();
