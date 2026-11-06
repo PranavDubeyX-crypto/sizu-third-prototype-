@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080b10">
+  <meta name="description" content="SIZU PRANAV — AI Humanoid Companion">
+  <title>SIZU PRANAV | AI Companion</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="app">
+
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">S</div>
+        <div>
+          <h1>SIZU</h1>
+          <span>PRANAV INTELLIGENCE</span>
+        </div>
+      </div>
+
+      <div class="connection">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="connectionStatus">INITIALIZING</span>
+      </div>
+
+      <button class="icon-button" id="settingsButton"
+        aria-label="Settings">⚙</button>
+    </header>
+
+    <main class="main-layout">
+
+      <section class="character-section">
+        <div class="character-heading">
+          <span>PERSONAL AI COMPANION</span>
+          <span class="version">SIZU 2.0</span>
+        </div>
+
+        <div class="character-stage" id="characterStage">
+          <div id="sizuCharacter" class="character">
+            <!-- Humanoid character is rendered by character.js -->
+          </div>
+
+          <div class="character-glow"></div>
+        </div>
+
+        <div class="character-info">
+          <h2 id="characterName">SIZU</h2>
+          <p id="characterEmotion">SYSTEM ONLINE</p>
+          <div class="character-status">
+            <span class="status-dot"></span>
+            READY TO CONNECT
+          </div>
+        </div>
+      </section>
+
+      <section class="assistant-section">
+
+        <div class="conversation-header">
+          <div>
+            <span class="eyebrow">YOUR CONVERSATION</span>
+            <h2>How can I help?</h2>
+          </div>
+          <button id="clearChatButton" class="text-button">
+            NEW CHAT
+          </button>
+        </div>
+
+        <div id="chatMessages" class="chat-messages"
+          aria-live="polite">
+          <div class="message assistant-message">
+            <div class="message-avatar">S</div>
+            <div class="message-content">
+              <span class="message-name">SIZU</span>
+              <p>Hey! I'm SIZU. Your AI companion is ready.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="input-area">
+          <div class="input-tools">
+            <button id="micButton" class="tool-button"
+              aria-label="Start voice input">🎙</button>
+            <span id="voiceStatus">VOICE READY</span>
+          </div>
+
+          <div class="message-input-row">
+            <textarea id="messageInput"
+              placeholder="Talk to SIZU..."
+              rows="1"
+              aria-label="Message"></textarea>
+
+            <button id="sendButton" class="send-button"
+              aria-label="Send message">➤</button>
+          </div>
+
+          <div class="input-footer">
+            <span>POWERED BY SIZU INTELLIGENCE</span>
+            <span>AI CAN MAKE MISTAKES</span>
+          </div>
+        </div>
+
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>SIZU PRANAV</span>
+      <span>BUILT FOR THE FUTURE</span>
+    </footer>
+
+  </div>
+
+  <script src="character.js" defer></script>
+  <script src="voice.js" defer></script>
+  <script src="app.js" defer></script>
+</body>
+</html>
